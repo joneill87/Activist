@@ -1,0 +1,123 @@
+﻿@section Scripts{
+   
+    <link rel="stylesheet" type="text/css" href="~/Scripts/dropzone.css" />
+
+    <script src="~/Scripts/jquery.signalR-2.1.2.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Scripts/dropzone.js"></script>
+
+    <script>
+
+        Dropzone.autoDiscover = false
+
+        $(function () {
+
+            var dropzone = new Dropzone("#dropzone-file-upload-form");
+
+            dropzone.on('success', function (file, response) {
+                init();
+            })
+
+            var currentIteration = 0;
+
+            var oracleHub = $.connection.oracleHub;
+            var iterationItems = [];
+            var imageUris = [];
+            var imageLabels = [];
+            var currentIndex = undefined;
+
+            function getArtifacts(ids) {
+                return $.get("/api/Artifacts/?" + $.map(ids, function (i) { return 'ids=' + i }).join('&'));
+            }
+
+            function setCurrentImage(index) {
+                $('#oracleArtifact').html('<img src="data:image/png;base64,' + imageUris[index] + '">');
+                if (imageLabels[index] == undefined) {
+                    $('#oracleDropdown').val('');
+                } else {
+                    $('#oracleDropdown').val(imageLabels[index]);
+                }
+                currentIndex = index;
+            }
+
+            function onCategorySelected() {
+                imageLabels[currentIndex] = $('#oracleDropdown').val();
+                iterationItems.QueryLabels[currentIndex] = $('#oracleDropdown').val();
+
+                var newIndex = currentIndex + 1;
+                if (newIndex < imageUris.length) {
+                    setCurrentImage(newIndex);
+                } else {
+                    $('#oracleSubmit').prop('disabled', false);
+                }
+            }
+
+            $('#oracleDropdown').change(onCategorySelected);
+
+            $('#oracleSubmit').click(function () {
+                oracleHub.server.labelsProvided(iterationItems);
+            });
+
+            $.extend(oracleHub.client, {
+                onQueryIssued: function (data) {
+                    console.log('query issued', data)
+                    iterationItems = data;
+                    iterationItems.QueryLabels = [];
+                    getArtifacts(data.QueryIDs).done(function (data) {
+                        imageUris = data;
+                        imageLabels = [];
+                        currentIteration++;
+                        $('#progress').text('current iteration: ' + currentIteration);
+                        setCurrentImage(0);
+                    }).fail(function (error) {
+                        console.log('boo', error);
+                    });
+                },
+                onJobCompleted: function () {
+                    console.log('job is completed!!!');
+                    $('#progress').text('job completed!!!');
+                }
+            });
+
+            function init() {
+                oracleHub.server.beginTest();
+            }
+
+            $.connection.hub.logging = true;
+            $.connection.hub.start()
+               .done(function () {
+                   console.log('in hub.start.done');
+               });
+
+            window.oracleHub = oracleHub;
+        });
+
+    </script>
+
+}
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<form id="dropzone-file-upload-form" method="post" enctype="multipart/form-data" action="/api/Dataset" class="dropzone">
+
+</form>
+
+
+<div id="oracleArtifact">
+
+</div>
+
+<select id="oracleDropdown">
+    <option value="">Please Select...</option>
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+</select>
+
+<button id="oracleSubmit" disabled="disabled">Submit Batch</button>
+
+<p id="progress"></p>
