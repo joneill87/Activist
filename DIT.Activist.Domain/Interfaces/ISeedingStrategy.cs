@@ -8,6 +8,6 @@ namespace DIT.Activist.Domain.Interfaces
 {
     public interface ISeedingStrategy
     {
-        Task<IEnumerable<string>> GetQueryIDs(IDataStore dataStore, int seedSize);
+        Task<IEnumerable<long>> GetQueryIDs(IDataStore dataStore, IDataFormat format, int seedSize);
     }
 }

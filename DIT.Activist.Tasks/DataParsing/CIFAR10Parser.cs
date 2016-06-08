@@ -137,23 +137,106 @@ namespace DIT.Activist.Tasks.DataParsing
             private const int idIndex = 0;
             private const int featureStartIndex = 1;
             private const int featureEndIndex = CIFAR_IMAGE_NUM_BYTES - 1;
+            private const int featureCount = featureEndIndex - featureStartIndex + 1;
             private const int artifactIndex = featureEndIndex + 1;
             private const int labelIndex = artifactIndex + 1;
             private const int arrLength = labelIndex + 1;
 
-            public int ArrayLength { get { return arrLength; } }
+            private readonly Type featureType = typeof(double);
+            private readonly Type labelType = typeof(int);
 
-            public int ArtifactIndex { get { return artifactIndex; } }
+            public int ArrayLength
+            {
+                get
+                {
+                    return arrLength;
+                }
+            }
 
-            public int FeatureIndexEnd { get { return featureEndIndex; } }
+            public Type FeatureType
+            {
+                get
+                {
+                    return featureType;
+                }
+            }
 
-            public int FeatureIndexStart { get { return featureStartIndex; } }
+            public Type LabelType
+            {
+                get
+                {
+                    return labelType;
+                }
+            }
 
-            public int FeatureCount { get { return featureEndIndex - featureStartIndex + 1; } }
+            private bool IsValidFeatureType(Type typeRequested)
+            {
+                return typeRequested.IsAssignableFrom(featureType);
+            }
 
-            public int IdIndex { get { return idIndex; } }
+            private bool IsValidLabelType(Type typeRequested)
+            {
+                return typeRequested.IsAssignableFrom(labelType);
+            }
 
-            public int LabelIndex { get { return labelIndex; } }
+            public long GetID(object[] row)
+            {
+                return Convert.ToInt64(row[idIndex]);
+            }
+
+            public string GetArtifact(object[] row)
+            {
+                return row[artifactIndex].ToString();
+            }
+
+            public T GetLabel<T>(object[] row)
+            {
+                if (IsValidLabelType(typeof(T)))
+                {
+                    return (T)row[labelIndex];
+                }
+                else
+                {
+                    throw new InvalidCastException(String.Format("CIFAR-10 Feature type is int32, cannot assign to {0} from int32", typeof(T).Name));
+                }
+            }
+
+            public IEnumerable<T> GetFeatures<T>(object[] row)
+            {
+                if (IsValidFeatureType(typeof(T)))
+                {
+                    return new ArraySegment<object>(row, featureStartIndex, featureCount).Select(v => (T)System.Convert.ChangeType(v, typeof(T)));
+                }
+                else
+                {
+                    throw new InvalidCastException(String.Format("CIFAR-10 Feature type is double, cannot assign to {0} from double", typeof(T).Name));
+                }
+            }
+
+            public object[] CreateEmptyRow()
+            {
+                return new object[arrLength];
+            }
+
+            public void SetID(object[] row, long id)
+            {
+                row[idIndex] = id;
+            }
+
+            public void SetArtifact(object[] row, string value)
+            {
+                row[artifactIndex] = value;
+            }
+
+            public void SetLabel<T>(object[] row, T value)
+            {
+                row[labelIndex] = value;
+            }
+
+            public void SetFeatures<T>(object[] row, IEnumerable<T> values)
+            {
+                Array.Copy(values.ToArray(), 0, row, featureStartIndex, featureCount);
+            }
         }
     }
 }

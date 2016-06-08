@@ -9,10 +9,10 @@ namespace DIT.Activist.Infrastructure.Datastores.InMemory
 {
     public class MemCacheDataStore : BaseDataStore
     {
-        private static readonly Dictionary<string, object[]> _labelled = new Dictionary<string, object[]>();
-        private static readonly Dictionary<string, object[]> _unlabelled = new Dictionary<string, object[]>();
+        private static readonly Dictionary<long, object[]> _labelled = new Dictionary<long, object[]>();
+        private static readonly Dictionary<long, object[]> _unlabelled = new Dictionary<long, object[]>();
 
-        protected override Task<object[]> GetItemById(string id)
+        protected override Task<object[]> GetItemById(long id)
         {
             if (_unlabelled.ContainsKey(id))
             {
@@ -34,38 +34,40 @@ namespace DIT.Activist.Infrastructure.Datastores.InMemory
 
         public override Task AddLabelledRow(object[] labelledRow)
         {
-            _labelled.Add(labelledRow[0].ToString(), labelledRow);
+            var id = dataFormat.GetID(labelledRow);
+            _labelled.Add(id, labelledRow);
             return Task.FromResult<object>(null);
         }
 
         public override Task AddUnlabelledRow(object[] unlabelledRow)
         {
+            var id = dataFormat.GetID(unlabelledRow);
             if (unlabelledRow.Length < dataFormat.ArrayLength)
             {
                 object[] withLabelPadding = new object[dataFormat.ArrayLength];
                 Array.Copy(unlabelledRow, withLabelPadding, unlabelledRow.Length);
-                _unlabelled.Add(unlabelledRow[0].ToString(), withLabelPadding);
+                _unlabelled.Add(id, withLabelPadding);
             }
             else
             {
-                _unlabelled.Add(unlabelledRow[0].ToString(), unlabelledRow);
+                _unlabelled.Add(id, unlabelledRow);
             }
 
             return Task.FromResult<object>(null);
         }
 
-        public override Task AddLabels(IDictionary<string, string> idLabelLookups)
+        public override Task AddLabels(IDictionary<long, string> idLabelLookups)
         {
-            foreach (KeyValuePair<string, string> kvp in idLabelLookups)
+            foreach (KeyValuePair<long, string> kvp in idLabelLookups)
             {
-                string key, label;
+                long key;
+                string label;
                 key = kvp.Key;
                 label = kvp.Value;
                 
                 object[] unlabelledRow = _unlabelled[key];
-                unlabelledRow[dataFormat.LabelIndex] = label;
+                dataFormat.SetLabel(unlabelledRow, label);
 
-                    
                 _unlabelled.Remove(key);
                 _labelled.Add(key, unlabelledRow);
             }

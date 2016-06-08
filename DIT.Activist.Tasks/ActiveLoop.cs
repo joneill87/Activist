@@ -11,14 +11,14 @@ namespace DIT.Activist.Tasks
 {
     public static class ActiveLoop
     {
-        public static async Task<JobIteration> GetSeedIteration(LabellingJob labellingJob, IJobIterationRepository iterationRepo, ISeedingStrategy seedingStrategy)
+        public static async Task<JobIteration> GetSeedIteration(LabellingJob labellingJob, IJobIterationRepository iterationRepo, ISeedingStrategy seedingStrategy, IDataFormat dataFormat)
         {
             IDataStore ds = labellingJob.DataStore;
             JobIteration iteration = new JobIteration()
             {
                 JobID=labellingJob.JobID,
                 PreviousIterationID=Guid.Empty,
-                QueryIDs=(await seedingStrategy.GetQueryIDs(ds, 3)).ToArray()
+                QueryIDs=(await seedingStrategy.GetQueryIDs(ds, dataFormat, 3)).ToArray()
             };
 
             await iterationRepo.Add(iteration);
@@ -37,7 +37,7 @@ namespace DIT.Activist.Tasks
             LabellingJob job = await jobRepo.Get(labellingJobId);
             IDataStore dataStore = job.DataStore;
             var idLabelLookups = iteration.QueryIDs.Zip(labels, (key, value) => new { key, value })
-                .ToDictionary(item => item.key, item => item.value);
+                .ToDictionary(item => Convert.ToInt64(item.key), item => item.value);
 
             await dataStore.AddLabels(idLabelLookups);
 
@@ -65,7 +65,7 @@ namespace DIT.Activist.Tasks
                 int batchSize = job.BatchSize;
 
 
-                var idQueries = await selectionStrategy.GenerateQuery(labelled, unlabelled, batchSize);
+                var idQueries = await selectionStrategy.GenerateQuery(labelled, unlabelled, job.DataFormat, batchSize);
                 newIteration.QueryIDs = idQueries.ToArray();
             }
 
@@ -87,7 +87,7 @@ namespace DIT.Activist.Tasks
         public static async Task<LabellingJob> CreateLabellingJob(ILabellingJobRepository jobRepo, 
             IJobIterationRepository iterationRepo, IDataStore dataStore, IPredictiveModel model, 
             ISelectionStrategy selectionStrategy, IStoppingCriterion stoppingCriterion, 
-            ISeedingStrategy seedingStrategy, IJobIterationNotifier notifier, 
+            ISeedingStrategy seedingStrategy, IJobIterationNotifier notifier, IDataFormat dataFormat,
             int batchSize, int seedSize)
         {
             var job = new LabellingJob()
@@ -97,6 +97,7 @@ namespace DIT.Activist.Tasks
                 Model = model,
                 SelectionStrategy = selectionStrategy,
                 StoppingCriterion = stoppingCriterion,
+                DataFormat = dataFormat,
                 BatchSize = batchSize
             };
 
@@ -106,7 +107,7 @@ namespace DIT.Activist.Tasks
             {
                 JobID = job.JobID,
                 PreviousIterationID = Guid.Empty,
-                QueryIDs = (await seedingStrategy.GetQueryIDs(dataStore, seedSize)).ToArray()
+                QueryIDs = (await seedingStrategy.GetQueryIDs(dataStore, dataFormat, seedSize)).ToArray()
             };
 
             await iterationRepo.Add(iteration);

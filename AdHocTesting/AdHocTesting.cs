@@ -30,6 +30,7 @@ namespace AdHocTesting
             IStoppingCriterion stoppingCriterion = new LabelLimit(15);
             ISeedingStrategy seedingStrategy = new RandomSeedingStrategy(15);
             IJobIterationNotifier notifier = JobIterationNotifier.Instance;
+            IDataFormat dataFormat = CIFAR10Parser.Format;
 
             int batchSize = 3;
             int seedSize = 3;
@@ -43,6 +44,7 @@ namespace AdHocTesting
                 stoppingCriterion: stoppingCriterion, 
                 seedingStrategy: seedingStrategy, 
                 notifier: notifier,
+                dataFormat: dataFormat,
                 batchSize: batchSize,
                 seedSize: seedSize);
 

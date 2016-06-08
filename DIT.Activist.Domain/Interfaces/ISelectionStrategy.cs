@@ -8,6 +8,6 @@ namespace DIT.Activist.Domain.Interfaces
 {
     public interface ISelectionStrategy
     {
-        Task<ICollection<string>> GenerateQuery(IEnumerable<object[]> labelled, IEnumerable<object[]> unlabelled, int batchSize);
+        Task<ICollection<long>> GenerateQuery(IEnumerable<object[]> labelled, IEnumerable<object[]> unlabelled, IDataFormat format, int batchSize);
     }
 }

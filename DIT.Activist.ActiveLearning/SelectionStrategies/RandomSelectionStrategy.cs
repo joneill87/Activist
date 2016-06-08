@@ -16,21 +16,22 @@ namespace DIT.Activist.ActiveLearning.SelectionStrategies
             randomGenerator = new Random(seed);
         }
 
-        public Task<ICollection<string>> GenerateQuery(IEnumerable<object[]> labelled, IEnumerable<object[]> unlabelled, int batchSize)
+        public Task<ICollection<long>> GenerateQuery(IEnumerable<object[]> labelled, IEnumerable<object[]> unlabelled, IDataFormat dataFormat, int batchSize)
         {
             List<object[]> unlabelledList = unlabelled.ToList();
 
             int idsRequired = Math.Min(unlabelledList.Count, batchSize);
-            List<string> queryIds = new List<string>(idsRequired);
+            List<long> queryIds = new List<long>(idsRequired);
 
             for (int ii=0; ii<idsRequired; ii++)
             {
                 int randomIndex = randomGenerator.Next(unlabelledList.Count);
-                queryIds.Add(unlabelledList[randomIndex][0].ToString());
+                var randomRow = unlabelledList[randomIndex];
+                queryIds.Add(dataFormat.GetID(randomRow));
                 unlabelledList.RemoveAt(randomIndex);
             }
 
-            return Task.FromResult<ICollection<string>>(queryIds);
+            return Task.FromResult<ICollection<long>>(queryIds);
         }
     }
 }

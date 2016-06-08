@@ -18,7 +18,7 @@ namespace DIT.Activist.Infrastructure.Datastores.Redis
         }
        
 
-        private RedisKey GetRedisID(string id)
+        private RedisKey GetRedisID(long id)
         {
             return RootNamespace.Append("/" + id);
         }
@@ -44,14 +44,14 @@ namespace DIT.Activist.Infrastructure.Datastores.Redis
             return db.SetMembersAsync(indexKey).ContinueWith(
                 (labelledKeysTask) =>
                 {
-                    var labelledKeys = labelledKeysTask.Result.Select(k => k.ToString());
+                    var labelledKeys = labelledKeysTask.Result.Select(k => (long)k);
                     return labelledKeys.Select(k => ConvertToTypedRow(db.ListRange(GetRedisID(k))));
                 });
         }
 
         public override async Task AddLabelledRow(object[] labelled)
         {
-            string id = labelled[0].ToString();
+            long id = dataFormat.GetID(labelled);
             //we assume by convention that ID is the first element in the array
             RedisKey idKey = GetRedisID(id);
             //the remaining information is the list of feature values
@@ -63,13 +63,13 @@ namespace DIT.Activist.Infrastructure.Datastores.Redis
             await db.SetAddAsync(GetLabelledIndexKey(), id);
         }
 
-        public override async Task AddLabels(IDictionary<string, string> idLabelLookups)
+        public override async Task AddLabels(IDictionary<long, string> idLabelLookups)
         {
             var db = RedisDatabase.GetDatabase();
 
             foreach (var kvp in idLabelLookups)
             {
-                string id = kvp.Key;
+                long id = kvp.Key;
                 string label = kvp.Value;
                 RedisKey idKey = GetRedisID(id);
                 await db.ListRightPushAsync(idKey, label);
@@ -80,7 +80,7 @@ namespace DIT.Activist.Infrastructure.Datastores.Redis
 
         public override async Task AddUnlabelledRow(object[] unlabelled)
         {
-            string id = unlabelled[0].ToString();
+            long id = dataFormat.GetID(unlabelled);
             RedisKey idKey = GetRedisID(id);
             IEnumerable<RedisValue> featureValues = unlabelled.Select(d => (RedisValue)(d.ToString()));
 
@@ -94,7 +94,7 @@ namespace DIT.Activist.Infrastructure.Datastores.Redis
             RedisDatabase.DeleteDatabase();
         }
 
-        protected override async Task<object[]> GetItemById(string id)
+        protected override async Task<object[]> GetItemById(long id)
         {
             var redisId = GetRedisID(id);
             var db = RedisDatabase.GetDatabase();

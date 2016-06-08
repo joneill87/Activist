@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DIT.Activist.ActiveLearning
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdHocTesting", "AdHocTesting\AdHocTesting.csproj", "{EFC3D3CD-481E-418D-848F-4DF70AEF4034}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DIT.Activist.ConsoleApp", "DIT.Activist.ConsoleApp\DIT.Activist.ConsoleApp.csproj", "{4FAC0FF2-8BD0-47A8-BD7B-C689677B8466}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{EFC3D3CD-481E-418D-848F-4DF70AEF4034}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFC3D3CD-481E-418D-848F-4DF70AEF4034}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFC3D3CD-481E-418D-848F-4DF70AEF4034}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FAC0FF2-8BD0-47A8-BD7B-C689677B8466}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FAC0FF2-8BD0-47A8-BD7B-C689677B8466}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FAC0FF2-8BD0-47A8-BD7B-C689677B8466}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FAC0FF2-8BD0-47A8-BD7B-C689677B8466}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

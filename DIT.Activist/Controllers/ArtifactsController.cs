@@ -25,7 +25,7 @@ namespace DIT.Activist.Controllers
         public ArtifactsController() : this(new DataStoreFactory()) { }
 
         // GET: api/Artifacts?ids=53443-286693...
-        public async Task<IEnumerable<string>> Get([FromUri]string[] ids)
+        public async Task<IEnumerable<string>> Get([FromUri]long[] ids)
         {
             return await dataStore.GetArtifactById(ids);
         }

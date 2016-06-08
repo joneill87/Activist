@@ -52,7 +52,8 @@ namespace DIT.Activist.Infrastructure.Datastores.SQLServer
 
         private object[] GetExpandedRow(object[] unexpanded)
         {
-            IEnumerable<string> featureVals = unexpanded[1].ToString().Split(',');
+
+            IEnumerable<object> featureVals = unexpanded[1].ToString().Split(',').Select(v => System.Convert.ChangeType(v, dataFormat.FeatureType));
             return unexpanded.Take(1).Concat(featureVals).Concat(unexpanded.Skip(2)).ToArray();
         }
 
@@ -96,21 +97,20 @@ namespace DIT.Activist.Infrastructure.Datastores.SQLServer
 
         public override Task AddLabelledRow(object[] labelled)
         {
-            long id = System.Convert.ToInt64(labelled[dataFormat.IdIndex]);
-            string featureVals = String.Join(",", labelled.Skip(dataFormat.FeatureIndexStart)
-                .Take(dataFormat.FeatureCount));
-            string artifactVal = labelled[dataFormat.ArtifactIndex].ToString();
-            string labelVal = labelled[dataFormat.LabelIndex].ToString();
+            long id = dataFormat.GetID(labelled);
+            string featureVals = String.Join(",", dataFormat.GetFeatures<object>(labelled));
+            string artifactVal = dataFormat.GetArtifact(labelled);
+            string labelVal = dataFormat.GetLabel<object>(labelled).ToString();
             string sql = String.Format("INSERT INTO {0} (ID, Features, Artifact, Label) VALUES ({1}, '{2}', '{3}', '{4}');", tableName, id, featureVals, artifactVal, labelVal);
             ExecuteNonQuery(sql);
             return Task.FromResult<object>(null);
         }
 
-        public override Task AddLabels(IDictionary<string, string> idLabelLookups)
+        public override Task AddLabels(IDictionary<long, string> idLabelLookups)
         {
             foreach (var kvp in idLabelLookups)
             {
-                string sql = String.Format("UPDATE {0} SET Label='{1}' WHERE ID={2};", tableName, kvp.Value, System.Convert.ToInt64(kvp.Key));
+                string sql = String.Format("UPDATE {0} SET Label={1} WHERE ID={2};", tableName, kvp.Value, System.Convert.ToInt64(kvp.Key));
                 ExecuteNonQuery(sql);
             }
             return Task.FromResult<object>(null);
@@ -118,10 +118,9 @@ namespace DIT.Activist.Infrastructure.Datastores.SQLServer
 
         public override Task AddUnlabelledRow(object[] unlabelled)
         {
-            long id = System.Convert.ToInt64(unlabelled[dataFormat.IdIndex]);
-            string featureVals = String.Join(",", unlabelled.Skip(dataFormat.FeatureIndexStart)
-                .Take(dataFormat.FeatureCount));
-            string artifactVal = unlabelled[dataFormat.ArtifactIndex].ToString();
+            long id = dataFormat.GetID(unlabelled);
+            string featureVals = String.Join(",", dataFormat.GetFeatures<object>(unlabelled));
+            string artifactVal = dataFormat.GetArtifact(unlabelled);
             string sql = String.Format("INSERT INTO {0} (ID, Features, Artifact) VALUES ({1}, {2}, {3});", tableName, id, featureVals, artifactVal);
             return Task.FromResult<object>(null);
         }
@@ -132,7 +131,7 @@ namespace DIT.Activist.Infrastructure.Datastores.SQLServer
             CreateInitialTable();
         }
 
-        protected override Task<object[]> GetItemById(string id)
+        protected override Task<object[]> GetItemById(long id)
         {
             string sql = String.Format("SELECT ID, Features, Artifact, Label FROM {0} WHERE ID={1}", tableName, id);
             using (SqlConnection conn = GetSqlConnection())

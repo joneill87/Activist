@@ -13,6 +13,8 @@ namespace DIT.Activist.Domain.Models
 
         public IDataStore DataStore { get; set; }
 
+        public IDataFormat DataFormat { get; set; }
+
         public ISelectionStrategy SelectionStrategy { get; set; }
 
         public int BatchSize { get; set; }

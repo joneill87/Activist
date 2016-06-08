@@ -10,17 +10,15 @@ namespace DIT.Activist.Domain.Interfaces
     {
         Task<IEnumerable<object[]>> GetLabelled();
         Task<IEnumerable<object[]>> GetUnlabelled();
-        Task AddLabels(IDictionary<string, string> idLabelLookups);
+        Task AddLabels(IDictionary<long, string> idLabelLookups);
         Task AddLabelledRow(object[] labelled);
         Task AddUnlabelledRow(object[] unlabelled);
-        Task<object[]> GetFeaturesById(string id);
-        Task<IEnumerable<object[]>> GetFeaturesById(IEnumerable<string> ids);
         void Clear();
         Task AddUnlabelledRow(IEnumerable<object[]> unlabelledRows);
         Task AddLabelledRow(IEnumerable<object[]> labelledRows);
-        Task<string> GetArtifactById(string id);
-        Task<IEnumerable<string>> GetArtifactById(IEnumerable<string> ids);
-        Task<object> GetLabelById(string id);
-        Task<IEnumerable<object>> GetLabelById(IEnumerable<string> ids);
+        Task<string> GetArtifactById(long id);
+        Task<IEnumerable<string>> GetArtifactById(IEnumerable<long> ids);
+        Task<object> GetLabelById(long id);
+        Task<IEnumerable<object>> GetLabelById(IEnumerable<long> ids);
     }
 }

@@ -14,7 +14,7 @@ namespace DIT.Activist.Domain.Models
 
         public Guid PreviousIterationID { get; set; }
 
-        public string[] QueryIDs { get; set; }
+        public long[] QueryIDs { get; set; }
         public string[] QueryLabels { get; set; }
     }
 }

@@ -4,17 +4,19 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{211F0230-A62F-45BA-B030-87A4281D308A}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{4FAC0FF2-8BD0-47A8-BD7B-C689677B8466}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DIT.Activist.ActiveLearning</RootNamespace>
-    <AssemblyName>DIT.Activist.ActiveLearning</AssemblyName>
+    <RootNamespace>DIT.Activist.ConsoleApp</RootNamespace>
+    <AssemblyName>DIT.Activist.ConsoleApp</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,6 +26,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -36,21 +39,12 @@
       <HintPath>..\packages\Accord.3.0.2\lib\net45\Accord.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Accord.MachineLearning, Version=3.0.2.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Accord.MachineLearning.3.0.2\lib\net45\Accord.MachineLearning.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Accord.Math, Version=3.0.2.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <HintPath>..\packages\Accord.Math.3.0.2\lib\net45\Accord.Math.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Accord.Statistics, Version=3.0.2.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Accord.Statistics.3.0.2\lib\net45\Accord.Statistics.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -59,22 +53,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\KNearestNeighbour.cs" />
-    <Compile Include="Models\LinearRegression.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SeedingStrategies\RandomSeedingStrategy.cs" />
-    <Compile Include="SelectionStrategies\DiversitySelectionStrategy.cs" />
-    <Compile Include="SelectionStrategies\RandomSelectionStrategy.cs" />
-    <Compile Include="StoppingCriteria\LabelLimit.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DIT.Activist.ActiveLearning\DIT.Activist.ActiveLearning.csproj">
+      <Project>{211f0230-a62f-45ba-b030-87a4281d308a}</Project>
+      <Name>DIT.Activist.ActiveLearning</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DIT.Activist.Domain\DIT.Activist.Domain.csproj">
       <Project>{99457606-7456-4bd1-afd5-af09bb3ea320}</Project>
       <Name>DIT.Activist.Domain</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\DIT.Activist.Infrastructure\DIT.Activist.Infrastructure.csproj">
+      <Project>{6ff402f8-3516-4ba5-a161-fbd52714fbe1}</Project>
+      <Name>DIT.Activist.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DIT.Activist.Repositories\DIT.Activist.Repositories.csproj">
+      <Project>{a93f6fd8-e4f8-4066-8946-a27035efc6d7}</Project>
+      <Name>DIT.Activist.Repositories</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DIT.Activist.Tasks\DIT.Activist.Tasks.csproj">
+      <Project>{f4278022-0f45-4648-984d-c5f6e35edc99}</Project>
+      <Name>DIT.Activist.Tasks</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Accord.3.0.2\build\Accord.targets" Condition="Exists('..\packages\Accord.3.0.2\build\Accord.targets')" />
