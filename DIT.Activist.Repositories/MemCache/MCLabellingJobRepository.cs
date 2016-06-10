@@ -1,6 +1,5 @@
-﻿using DIT.Activist.Domain;
-using DIT.Activist.Domain.Models;
-using DIT.Activist.Domain.Repositories;
+﻿using DIT.Activist.Domain.Models;
+using DIT.Activist.Domain.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DIT.Activist.Repositories.MemCache
 {
-    public class MCLabellingJobRepository : ILabellingJobRepository
+    internal class MCLabellingJobRepository : ILabellingJobRepository
     {
         private static readonly Dictionary<Guid, LabellingJob> cache = new Dictionary<Guid, LabellingJob>();
 

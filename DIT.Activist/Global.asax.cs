@@ -1,4 +1,7 @@
-﻿using DIT.Activist.Hubs;
+﻿using DIT.Activist.Domain.Interfaces;
+using DIT.Activist.Domain.Interfaces.ActiveLoop;
+using DIT.Activist.Hubs;
+using DIT.Activist.Infrastructure.Factories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +23,9 @@ namespace DIT.Activist.Webservice
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            HubNotifications.RegisterHubNotifier();
+
+            IJobIterationNotifier jobIterationNotifier = new JobIterationNotifierFactory().Create();
+            HubNotifications.RegisterHubNotifier(jobIterationNotifier);
         }
     }
 }

@@ -45,15 +45,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CombinationStream.cs" />
+    <Compile Include="Datastores\Exceptions.cs" />
     <Compile Include="Factories\DataStoreFactory.cs" />
     <Compile Include="Datastores\BaseDataStore.cs" />
     <Compile Include="Datastores\Redis\RedisDataStore.cs" />
     <Compile Include="Datastores\SQLServer\SQLServerDataStore.cs" />
+    <Compile Include="Factories\JobIterationNotifierFactory.cs" />
     <Compile Include="JobIterationNotifier.cs" />
     <Compile Include="Datastores\InMemory\MemCacheDataStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Datastores\Redis\RedisDatabase.cs" />
-    <Compile Include="Datastores\Redis\RedisDatastore_OLD.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DIT.Activist.Domain\DIT.Activist.Domain.csproj">

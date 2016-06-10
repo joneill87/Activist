@@ -1,5 +1,7 @@
-﻿using DIT.Activist.Domain.Models;
+﻿using DIT.Activist.Domain.Interfaces.ActiveLoop;
+using DIT.Activist.Domain.Models;
 using DIT.Activist.Infrastructure;
+using DIT.Activist.Infrastructure.Factories;
 using Microsoft.AspNet.SignalR;
 using System;
 using System.Collections.Generic;
@@ -11,10 +13,10 @@ namespace DIT.Activist.Hubs
 {
     public static class HubNotifications
     {
-        public static void RegisterHubNotifier()
+        public static void RegisterHubNotifier(IJobIterationNotifier notifier)
         {
             var observer = new JobIterationObserver();
-            JobIterationNotifier.Instance.Subscribe(observer);
+            notifier.Subscribe(observer);
         }
 
         private class JobIterationObserver : IObserver<JobIteration>

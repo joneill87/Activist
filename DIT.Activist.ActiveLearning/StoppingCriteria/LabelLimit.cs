@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DIT.Activist.ActiveLearning.StoppingCriteria
 {
-    public class LabelLimit : IStoppingCriterion
+    internal class LabelLimit : IStoppingCriterion
     {
         private int maxLabels;
 

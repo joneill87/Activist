@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DIT.Activist.Domain.Interfaces
+namespace DIT.Activist.Domain.Interfaces.Data
 {
     public interface IDataStore
     {

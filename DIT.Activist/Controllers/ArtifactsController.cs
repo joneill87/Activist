@@ -1,5 +1,4 @@
-﻿using DIT.Activist.Domain.Interfaces;
-using DIT.Activist.Infrastructure;
+﻿using DIT.Activist.Domain.Interfaces.Data;
 using DIT.Activist.Infrastructure.Factories;
 using DIT.Activist.Tasks.DataParsing;
 using System;
@@ -16,7 +15,9 @@ namespace DIT.Activist.Controllers
     {
         private IDataStoreFactory dataStoreFactory;
 
-        private IDataStore dataStore { get { return dataStoreFactory.Create(CIFAR10Parser.Format); } }
+        private IDataStore GetDataStore(string name) {
+            return dataStoreFactory.Retrieve(name); 
+        }
 
         public ArtifactsController(IDataStoreFactory dsFactory)
         {
@@ -26,9 +27,9 @@ namespace DIT.Activist.Controllers
         public ArtifactsController() : this(new DataStoreFactory()) { }
 
         // GET: api/Artifacts?ids=53443-286693...
-        public async Task<IEnumerable<string>> Get([FromUri]long[] ids)
+        public async Task<IEnumerable<string>> Get(string id, [FromUri]long[] ids)
         {
-            return await dataStore.GetArtifactById(ids);
+            return await dataStoreFactory.Retrieve(id).GetArtifactById(ids);
         }
 
         // POST: api/Artifacts

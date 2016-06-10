@@ -1,4 +1,4 @@
-﻿using DIT.Activist.Domain.Interfaces;
+﻿using DIT.Activist.Domain.Interfaces.ActiveLoop;
 using DIT.Activist.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DIT.Activist.Infrastructure
 {
-    public class JobIterationNotifier : IJobIterationNotifier
+    internal class JobIterationNotifier : IJobIterationNotifier
     {
         private List<IObserver<JobIteration>> observers;
 

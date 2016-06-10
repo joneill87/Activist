@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DIT.Activist.Domain.Interfaces
+namespace DIT.Activist.Domain.Interfaces.Data
 {
     public interface IDataStoreFactory
     {
-        IDataStore Create(IDataFormat format);
+        IDataStore Create(string name, IDataFormat format);
+
+        IDataStore Retrieve(string name);
     }
 }

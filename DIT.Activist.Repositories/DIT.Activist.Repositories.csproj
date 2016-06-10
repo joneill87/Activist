@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JobIterationRepositoryFactory.cs" />
+    <Compile Include="LabellingJobRepositoryFactory.cs" />
     <Compile Include="MemCache\MCJobIterationRepository.cs" />
     <Compile Include="MemCache\MCLabellingJobRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

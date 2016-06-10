@@ -1,4 +1,5 @@
 ﻿using DIT.Activist.Domain.Interfaces;
+using DIT.Activist.Domain.Interfaces.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +12,27 @@ namespace DIT.Activist.Infrastructure.Datastores
     {
         protected IDataFormat dataFormat;
 
-        internal BaseDataStore(IDataFormat format)
-        {
-            this.dataFormat = format;
-        }
+        public abstract Task AddLabelledRow(object[] labelled);
+
+        public abstract Task AddLabels(IDictionary<long, string> idLabelLookups);
+
+        public abstract Task AddUnlabelledRow(object[] unlabelled);
+
+        public abstract void Clear();
+
+        public abstract void Connect(string name);
+
+        public abstract bool Exists(string name);
+
+        protected abstract void CreateDatastore(string name);
+
+        protected abstract void CreateOrReplaceDatastore(string name);
+
+        protected abstract Task<object[]> GetItemById(long id);
 
         protected abstract Task<IEnumerable<object[]>> GetRawLabelledData();
 
         protected abstract Task<IEnumerable<object[]>> GetRawUnlabelledData();
-
-        public abstract Task AddLabelledRow(object[] labelled);
 
         public virtual Task AddLabelledRow(IEnumerable<object[]> labelledRows)
         {
@@ -32,9 +44,6 @@ namespace DIT.Activist.Infrastructure.Datastores
             return Task.FromResult<object>(null);
         }
 
-        public abstract Task AddLabels(IDictionary<long, string> idLabelLookups);
-        public abstract Task AddUnlabelledRow(object[] unlabelled);
-
         public virtual Task AddUnlabelledRow(IEnumerable<object[]> unlabelledRows)
         {
             foreach (object[] row in unlabelledRows)
@@ -44,25 +53,21 @@ namespace DIT.Activist.Infrastructure.Datastores
             return Task.FromResult<object>(null);
         }
 
-        public abstract void Clear();
-
-        public virtual Task<IEnumerable<string>> GetArtifactById(IEnumerable<long> ids)
-        {
-            List<string> artifacts = new List<string>();
-            foreach(long id in ids)
-            {
-                artifacts.Add(GetArtifactById(id).Result);
-            }
-            return Task.FromResult(artifacts.AsEnumerable());
-        }
-
         public virtual Task<string> GetArtifactById(long id)
         {
             object[] row = GetItemById(id).Result;
             return Task.FromResult(dataFormat.GetArtifact(row));
         }
 
-        protected abstract Task<object[]> GetItemById(long id);
+        public virtual Task<IEnumerable<string>> GetArtifactById(IEnumerable<long> ids)
+        {
+            List<string> artifacts = new List<string>();
+            foreach (long id in ids)
+            {
+                artifacts.Add(GetArtifactById(id).Result);
+            }
+            return Task.FromResult(artifacts.AsEnumerable());
+        }
 
         public virtual Task<object> GetLabelById(long id)
         {
@@ -80,9 +85,21 @@ namespace DIT.Activist.Infrastructure.Datastores
             return Task.FromResult(GetRawLabelledData().Result);
         }
 
-        public Task<IEnumerable<object[]>> GetUnlabelled()
+        public virtual Task<IEnumerable<object[]>> GetUnlabelled()
         {
             return Task.FromResult(GetRawUnlabelledData().Result);
+        }
+
+        public void Create(string name, IDataFormat dataFormat)
+        {
+            this.dataFormat = dataFormat;
+            CreateDatastore(name);
+        }
+
+        public void CreateOrReplace(string name, IDataFormat dataFormat)
+        {
+            this.dataFormat = dataFormat;
+            CreateOrReplaceDatastore(name);
         }
     }
 }

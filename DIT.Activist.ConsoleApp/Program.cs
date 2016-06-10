@@ -1,13 +1,13 @@
 ﻿using DIT.Activist.ActiveLearning.Factories;
-using DIT.Activist.ActiveLearning.StoppingCriteria;
 using DIT.Activist.Domain.Interfaces;
 using DIT.Activist.Domain.Interfaces.ActiveLearning;
+using DIT.Activist.Domain.Interfaces.ActiveLoop;
+using DIT.Activist.Domain.Interfaces.Data;
 using DIT.Activist.Domain.Interfaces.Factories;
-using DIT.Activist.Domain.Repositories;
-using DIT.Activist.Infrastructure;
+using DIT.Activist.Domain.Interfaces.Repositories;
 using DIT.Activist.Infrastructure.Factories;
-using DIT.Activist.Repositories.MemCache;
-using DIT.Activist.Tasks.DataParsing;
+using DIT.Activist.Repositories;
+using DIT.Activist.Tasks.DataParsing.Formats;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,10 +20,10 @@ namespace DIT.Activist.ConsoleApp
     {
         static void Main(string[] args)
         {
-            ILabellingJobRepository jobRepo = new MCLabellingJobRepository();
-            IJobIterationRepository iterationRepo = new MCJobIterationRepository();
+            ILabellingJobRepository jobRepo = new LabellingJobRepositoryFactory().Create();
+            IJobIterationRepository iterationRepo = new JobIterationRepositoryFactory().Create();
 
-            IDataStore dataStore = new DataStoreFactory().Create(CIFAR10Parser.Format);
+            IDataStore dataStore = new DataStoreFactory().CreateOrReplace("TestJack", DataFormats.CIFAR10.GetFormat());
 
             IPredictiveModelFactory modelFactory = new PredictiveModelFactory();
             Dictionary<string, string> modelParameters = new Dictionary<string, string>();
@@ -46,8 +46,8 @@ namespace DIT.Activist.ConsoleApp
             seedingParameters.Add("randomSeed", "15");
             ISeedingStrategy seedingStrategy = seedingFactory.Create("RandomSeedingStrategy", seedingParameters);
 
-            IJobIterationNotifier notifier = JobIterationNotifier.Instance;
-            IDataFormat dataFormat = CIFAR10Parser.Format;
+            IJobIterationNotifier notifier = new JobIterationNotifierFactory().Create();
+            IDataFormat dataFormat = DataFormats.CIFAR10.GetFormat();
         }
 
         static void Test(Func<double[], double[], double> func)

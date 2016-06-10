@@ -9,13 +9,9 @@ using System.Threading.Tasks;
 
 namespace DIT.Activist.Infrastructure.Datastores.SQLServer
 {
-    public class SQLServerDataStore : BaseDataStore
+    internal class SQLServerDataStore : BaseDataStore
     {
-        private readonly string server;
-        private readonly string dbName;
-        private const string tableName = "ADS";
-
-        private static bool shouldRecreate = false;
+        private string tableName;
         
         private SqlConnection GetSqlConnection()
         {
@@ -57,20 +53,20 @@ namespace DIT.Activist.Infrastructure.Datastores.SQLServer
             return unexpanded.Take(1).Concat(featureVals).Concat(unexpanded.Skip(2)).ToArray();
         }
 
-        private bool TableExists()
+        private bool TableExists(string name)
         {
-            string sql = String.Format("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}'", tableName);
+            string sql = String.Format("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}'", name);
             int tableCount = (int)ExecuteScalar(sql);
             return tableCount > 0;
         }
 
-        private void DropTable()
+        private void DropTable(string tableName)
         {
             string sql = String.Format("DROP TABLE {0}", tableName);
             ExecuteScalar(sql);
         }
 
-        private void CreateInitialTable()
+        private void CreateTable(string tableName)
         {
             StringBuilder sb = new StringBuilder();
             
@@ -82,17 +78,43 @@ namespace DIT.Activist.Infrastructure.Datastores.SQLServer
             ExecuteNonQuery(sb.ToString());
         }
 
-        public SQLServerDataStore(IDataFormat format) : base(format)
+        public SQLServerDataStore()
         {
-            if (shouldRecreate)
+           
+        }
+
+        protected override void CreateDatastore(string name)
+        {
+            if (TableExists(name))
             {
-                if (TableExists())
-                {
-                    DropTable();
-                }
-                CreateInitialTable();
-                shouldRecreate = false;
+                throw new DatastoreExistsException(name);
             }
+            CreateTable(name);
+        }
+
+        protected override void CreateOrReplaceDatastore(string name)
+        {
+            if (TableExists(name))
+            {
+                DropTable(name);
+            }
+
+            CreateDatastore(name);
+        }
+
+        public override void Connect(string name)
+        {
+            if (!TableExists(name))
+            {
+                throw new NonExistantDatastoreException(name);
+            }
+
+            tableName = name;
+        }
+
+        public override bool Exists(string name)
+        {
+            return TableExists(name);
         }
 
         public override Task AddLabelledRow(object[] labelled)
@@ -127,8 +149,8 @@ namespace DIT.Activist.Infrastructure.Datastores.SQLServer
 
         public override void Clear()
         {
-            DropTable();
-            CreateInitialTable();
+            DropTable(tableName);
+            CreateTable(tableName);
         }
 
         protected override Task<object[]> GetItemById(long id)

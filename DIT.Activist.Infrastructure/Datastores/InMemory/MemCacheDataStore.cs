@@ -1,4 +1,4 @@
-﻿using DIT.Activist.Domain.Interfaces;
+﻿using DIT.Activist.Domain.Interfaces.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,35 +7,61 @@ using System.Threading.Tasks;
 
 namespace DIT.Activist.Infrastructure.Datastores.InMemory
 {
-    public class MemCacheDataStore : BaseDataStore
+    internal class MemCacheDataStore : BaseDataStore
     {
-        private static readonly Dictionary<long, object[]> _labelled = new Dictionary<long, object[]>();
-        private static readonly Dictionary<long, object[]> _unlabelled = new Dictionary<long, object[]>();
+        private static Dictionary<string, Tuple<Cache, IDataFormat>> Datasets = new Dictionary<string, Tuple<Cache, IDataFormat>>();
+
+        private Cache connectedDataset = null;
 
         protected override Task<object[]> GetItemById(long id)
         {
-            if (_unlabelled.ContainsKey(id))
+            if (connectedDataset._unlabelled.ContainsKey(id))
             {
-                object[] single = _unlabelled.Single(u => u.Key == id).Value;
+                object[] single = connectedDataset._unlabelled.Single(u => u.Key == id).Value;
                 return Task.FromResult(single);
             }
             else
             {
-                object[] single = _labelled.Single(l => l.Key == id).Value;
+                object[] single = connectedDataset._labelled.Single(l => l.Key == id).Value;
                 return Task.FromResult(single);
             }
         }
 
-        public MemCacheDataStore(IDataFormat dataFormat) : base(dataFormat)
-        {
+        public MemCacheDataStore() { }
 
+        public override void Connect(string name)
+        {
+            if (!Datasets.ContainsKey(name))
+            {
+                throw new NonExistantDatastoreException(name);
+            }
+            connectedDataset = Datasets[name].Item1;
         }
 
+        protected override void CreateDatastore(string name)
+        {
+            if (Datasets.ContainsKey(name))
+            {
+                throw new DatastoreExistsException(name);
+            }
+            CreateOrReplaceDatastore(name);
+        }
+
+        protected override void CreateOrReplaceDatastore(string name)
+        {
+            Datasets.Add(name, new Tuple<Cache, IDataFormat>(new Cache(), dataFormat));
+            Connect(name);
+        }
+
+        public override bool Exists(string name)
+        {
+            return Datasets.ContainsKey(name);
+        }
 
         public override Task AddLabelledRow(object[] labelledRow)
         {
             var id = dataFormat.GetID(labelledRow);
-            _labelled.Add(id, labelledRow);
+            connectedDataset._labelled.Add(id, labelledRow);
             return Task.FromResult<object>(null);
         }
 
@@ -46,11 +72,11 @@ namespace DIT.Activist.Infrastructure.Datastores.InMemory
             {
                 object[] withLabelPadding = new object[dataFormat.ArrayLength];
                 Array.Copy(unlabelledRow, withLabelPadding, unlabelledRow.Length);
-                _unlabelled.Add(id, withLabelPadding);
+                connectedDataset._unlabelled.Add(id, withLabelPadding);
             }
             else
             {
-                _unlabelled.Add(id, unlabelledRow);
+                connectedDataset._unlabelled.Add(id, unlabelledRow);
             }
 
             return Task.FromResult<object>(null);
@@ -65,11 +91,11 @@ namespace DIT.Activist.Infrastructure.Datastores.InMemory
                 key = kvp.Key;
                 label = kvp.Value;
                 
-                object[] unlabelledRow = _unlabelled[key];
+                object[] unlabelledRow = connectedDataset._unlabelled[key];
                 dataFormat.SetLabel(unlabelledRow, label);
 
-                _unlabelled.Remove(key);
-                _labelled.Add(key, unlabelledRow);
+                connectedDataset._unlabelled.Remove(key);
+                connectedDataset._labelled.Add(key, unlabelledRow);
             }
 
             return Task.FromResult<object>(null);
@@ -77,18 +103,30 @@ namespace DIT.Activist.Infrastructure.Datastores.InMemory
 
         public override void Clear()
         {
-            _labelled.Clear();
-            _unlabelled.Clear();
+            connectedDataset._labelled.Clear();
+            connectedDataset._unlabelled.Clear();
         }
 
         protected override Task<IEnumerable<object[]>> GetRawLabelledData()
         {
-            return Task.FromResult(_labelled.Values.AsEnumerable());
+            return Task.FromResult(connectedDataset._labelled.Values.AsEnumerable());
         }
 
         protected override Task<IEnumerable<object[]>> GetRawUnlabelledData()
         {
-            return Task.FromResult(_unlabelled.Values.AsEnumerable());
+            return Task.FromResult(connectedDataset._unlabelled.Values.AsEnumerable());
+        }
+
+        private class Cache
+        {
+            public Dictionary<long, object[]> _labelled;
+            public Dictionary<long, object[]> _unlabelled;
+
+            public Cache()
+            {
+                _labelled = new Dictionary<long, object[]>();
+                _unlabelled = new Dictionary<long, object[]>();
+            }
         }
     }
 }

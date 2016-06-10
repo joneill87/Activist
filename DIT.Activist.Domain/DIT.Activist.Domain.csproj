@@ -41,21 +41,27 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\ActiveLearning\DiversityFunctions.cs" />
+    <Compile Include="Interfaces\Data\DataFormats.cs" />
+    <Compile Include="Interfaces\Data\IDataParser.cs" />
+    <Compile Include="Interfaces\Data\IDataParserFactory.cs" />
     <Compile Include="Interfaces\Factories\IActivatable.cs" />
+    <Compile Include="Interfaces\Factories\IJobIterationNotifierFactory.cs" />
+    <Compile Include="Interfaces\Factories\IJobIterationRepositoryFactory.cs" />
+    <Compile Include="Interfaces\Factories\ILabellingJobRepositoryFactory.cs" />
     <Compile Include="Interfaces\Factories\IPredictiveModelFactory.cs" />
     <Compile Include="Interfaces\Factories\ISeedingStrategyFactory.cs" />
     <Compile Include="Interfaces\Factories\ISelectionStrategyFactory.cs" />
     <Compile Include="Interfaces\Factories\IStoppingCriterionFactory.cs" />
-    <Compile Include="Interfaces\IDataFormat.cs" />
-    <Compile Include="Interfaces\IDataStore.cs" />
-    <Compile Include="Interfaces\IDataStoreFactory.cs" />
-    <Compile Include="Interfaces\IJobIterationNotifier.cs" />
-    <Compile Include="Interfaces\ILoopNotificationHub.cs" />
+    <Compile Include="Interfaces\Data\IDataFormat.cs" />
+    <Compile Include="Interfaces\Data\IDataStore.cs" />
+    <Compile Include="Interfaces\Data\IDataStoreFactory.cs" />
+    <Compile Include="Interfaces\ActiveLoop\IJobIterationNotifier.cs" />
+    <Compile Include="Interfaces\ActiveLoop\ILoopNotificationHub.cs" />
     <Compile Include="Interfaces\Components\ISeedingStrategy.cs" />
     <Compile Include="Models\Datasets\Dataset.cs" />
     <Compile Include="Models\Datasets\DatasetMetadata.cs" />
-    <Compile Include="Repositories\IJobIterationRepository.cs" />
-    <Compile Include="Repositories\ILabellingJobRepository.cs" />
+    <Compile Include="Interfaces\Repositories\IJobIterationRepository.cs" />
+    <Compile Include="Interfaces\Repositories\ILabellingJobRepository.cs" />
     <Compile Include="Interfaces\Components\IPredictiveModel.cs" />
     <Compile Include="Interfaces\Components\ISelectionStrategy.cs" />
     <Compile Include="Interfaces\Components\IStoppingCriterion.cs" />

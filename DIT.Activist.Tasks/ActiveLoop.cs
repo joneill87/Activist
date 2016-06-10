@@ -1,11 +1,13 @@
 ﻿using DIT.Activist.Domain.Interfaces;
+using DIT.Activist.Domain.Interfaces.Data;
 using DIT.Activist.Domain.Models;
-using DIT.Activist.Domain.Repositories;
+using DIT.Activist.Domain.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DIT.Activist.Domain.Interfaces.ActiveLoop;
 
 namespace DIT.Activist.Tasks
 {

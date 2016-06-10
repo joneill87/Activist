@@ -1,7 +1,6 @@
-﻿using DIT.Activist.Domain.Interfaces;
+﻿using DIT.Activist.Domain.Interfaces.Data;
+using DIT.Activist.Infrastructure.Datastores;
 using DIT.Activist.Infrastructure.Datastores.InMemory;
-using DIT.Activist.Infrastructure.Datastores.Redis;
-using DIT.Activist.Infrastructure.Datastores.SQLServer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +11,32 @@ namespace DIT.Activist.Infrastructure.Factories
 {
     public class DataStoreFactory : IDataStoreFactory
     {
-        public IDataStore Create(IDataFormat format)
+        private BaseDataStore GetInstance()
         {
-            return new MemCacheDataStore(format);
+            return new MemCacheDataStore();
+        }
+
+        public IDataStore Create(string name, IDataFormat format)
+        {
+            var ds = GetInstance();
+            ds.Create(name, format);
+            ds.Connect(name);
+            return ds;
+        }
+
+        public IDataStore CreateOrReplace(string name, IDataFormat format)
+        {
+            var ds = GetInstance();
+            ds.CreateOrReplace(name, format);
+            ds.Connect(name);
+            return ds;
+        }
+
+        public IDataStore Retrieve(string name)
+        {
+            var ds = GetInstance();
+            ds.Connect(name);
+            return ds;
         }
     }
 }

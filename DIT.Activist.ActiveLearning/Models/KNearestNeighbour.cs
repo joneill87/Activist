@@ -10,7 +10,7 @@ using Accord.Math;
 
 namespace DIT.Activist.ActiveLearning.Models
 {
-    public class KNearestNeighbour : IPredictiveModel
+    internal class KNearestNeighbour : IPredictiveModel
     {
         private AccordKNN knn;
         private int k;

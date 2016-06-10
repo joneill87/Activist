@@ -6,15 +6,14 @@ using DIT.Activist.Infrastructure;
 using System.IO;
 using DIT.Activist.Domain.Interfaces;
 using System.Collections.Generic;
-using DIT.Activist.ActiveLearning.Models;
 using System.Threading.Tasks;
-using DIT.Activist.Infrastructure.Datastores.InMemory;
-using DIT.Activist.ActiveLearning.SelectionStrategies;
 using Accord.Math;
 using DIT.Activist.Infrastructure.Factories;
 using DIT.Activist.Domain.Interfaces.Factories;
 using DIT.Activist.Domain.Interfaces.ActiveLearning;
 using DIT.Activist.ActiveLearning.Factories;
+using DIT.Activist.Domain.Interfaces.Data;
+using DIT.Activist.Tasks.DataParsing.Parsers;
 
 namespace DIT.Activist.Tests.AdHoc
 {
@@ -53,13 +52,13 @@ namespace DIT.Activist.Tests.AdHoc
             const int TRAIN_LIMIT = 50;
             const int TEST_LIMIT = 500;
             var parser = new CIFAR10Parser();
-            IDataFormat dataFormat = CIFAR10Parser.Format;
+            IDataFormat dataFormat = parser.Format;
 
             //gather the data
             IEnumerable<object[]> dataInput = parser.ExtractFeaturesAndLabels(File.Open(Path.Combine(basePath, "dataBatchFull.bin"), FileMode.Open), TRAIN_LIMIT);
 
             //clear and repopulate the datastore
-            IDataStore dataStore = new DataStoreFactory().Create(dataFormat);
+            IDataStore dataStore = new DataStoreFactory().CreateOrReplace("TestJack", dataFormat);
             dataStore.Clear();
             var addTask = dataStore.AddLabelledRow(dataInput);
             Task.WaitAll(addTask);

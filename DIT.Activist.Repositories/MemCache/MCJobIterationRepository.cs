@@ -1,14 +1,14 @@
-﻿using DIT.Activist.Domain.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DIT.Activist.Domain.Models;
+using DIT.Activist.Domain.Interfaces.Repositories;
 
 namespace DIT.Activist.Repositories.MemCache
 {
-    public class MCJobIterationRepository : IJobIterationRepository
+    internal class MCJobIterationRepository : IJobIterationRepository
     {
         private static readonly Dictionary<Guid, JobIteration> cache = new Dictionary<Guid, JobIteration>();
 

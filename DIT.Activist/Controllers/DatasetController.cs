@@ -7,17 +7,24 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using DIT.Activist.Webservice.Helpers;
-using DIT.Activist.Infrastructure;
-using DIT.Activist.Tasks.DataParsing;
-using DIT.Activist.Domain.Interfaces;
+using DIT.Activist.Tasks.DataParsing.Formats;
+
 using DIT.Activist.Infrastructure.Factories;
+using DIT.Activist.Domain.Interfaces.Data;
+using DIT.Activist.Tasks.DataParsing.Parsers;
 
 namespace DIT.Activist.Controllers
 {
     public class DatasetController : ApiController
     {
         IDataStoreFactory dsFactory;
-        IDataStore dataStore {  get { return dsFactory.Create(CIFAR10Parser.Format); } }
+        IDataStore dataStore
+        {
+            get
+            { 
+                return dsFactory.Create("TestJack", DataFormats.CIFAR10.GetFormat());
+            }
+        }
 
         public DatasetController(IDataStoreFactory dsFactory)
         {
@@ -39,7 +46,7 @@ namespace DIT.Activist.Controllers
         }
 
         // POST: api/DataSet
-        public async Task<Dataset> Post()
+        public async Task<Dataset> Post([FromUri]string datasetName, [FromUri]DataFormats dataFormat)
         {
             if (!Request.Content.IsMimeMultipartContent())
             {

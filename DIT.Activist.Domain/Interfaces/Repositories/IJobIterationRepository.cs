@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DIT.Activist.Domain.Repositories
+namespace DIT.Activist.Domain.Interfaces.Repositories
 {
     public interface IJobIterationRepository
     {

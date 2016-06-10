@@ -1,4 +1,4 @@
-﻿using DIT.Activist.Domain.Interfaces;
+﻿using DIT.Activist.Domain.Interfaces.Data;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DIT.Activist.Infrastructure.Datastores.Redis
 {
-    public static class RedisDatabase
+    internal static class RedisDatabase
     {
         private static bool isInitialized = false;
         private static string rootNamespace = null;
@@ -63,7 +63,7 @@ namespace DIT.Activist.Infrastructure.Datastores.Redis
             //this should give a description of the feature space
             db.StringSet(key, "a");
 
-            return new RedisDataStore(GetDatasetRootNamespace(datasetName), dataFormat);
+            return new RedisDataStore();
         }
 
         public static RedisDataStore GetDataset(string datasetName)

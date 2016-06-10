@@ -1,4 +1,5 @@
 ﻿using DIT.Activist.Domain.Interfaces;
+using DIT.Activist.Domain.Interfaces.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DIT.Activist.ActiveLearning.SeedingStrategies
 {
-    public class RandomSeedingStrategy : ISeedingStrategy
+    internal class RandomSeedingStrategy : ISeedingStrategy
     {
         private Random randomGenerator;
 

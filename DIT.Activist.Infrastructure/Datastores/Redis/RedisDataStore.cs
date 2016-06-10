@@ -12,11 +12,46 @@ namespace DIT.Activist.Infrastructure.Datastores.Redis
     {
         public RedisKey RootNamespace { get; private set; }
 
-        public RedisDataStore(RedisKey rootNamespace, IDataFormat dataFormat) : base(dataFormat)
+        public RedisDataStore()
         {
-            RootNamespace = rootNamespace;
+
         }
-       
+
+        protected override void CreateDatastore(string name)
+        {
+            if (RedisDatabase.DatasetExists(name))
+            {
+                throw new DatastoreExistsException(name);
+            }
+
+            RootNamespace = name;
+            RedisDatabase.CreateDataset(name, dataFormat);
+        }
+
+        protected override void CreateOrReplaceDatastore(string name)
+        {
+            if (RedisDatabase.DatasetExists(name))
+            {
+                RedisDatabase.DestroyDataset(name);
+            }
+
+            RootNamespace = name;
+            CreateDatastore(name);
+        }
+
+        public override void Connect(string name)
+        {
+            if (!RedisDatabase.DatasetExists(name))
+            {
+                throw new NonExistantDatastoreException(name);
+            }
+            RootNamespace = name;
+        }
+
+        public override bool Exists(string name)
+        {
+            return RedisDatabase.DatasetExists(name);
+        }
 
         private RedisKey GetRedisID(long id)
         {

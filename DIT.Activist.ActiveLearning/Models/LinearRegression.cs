@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DIT.Activist.ActiveLearning.Models
 {
-    public class LinearRegression : IPredictiveModel
+    internal class LinearRegression : IPredictiveModel
     {
         private const bool USE_INTERCEPT = true;
 

@@ -1,5 +1,6 @@
 ﻿using Accord.Math;
 using DIT.Activist.Domain.Interfaces;
+using DIT.Activist.Domain.Interfaces.Data;
 using DIT.Activist.Domain.Interfaces.ActiveLearning;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DIT.Activist.ActiveLearning.SelectionStrategies
 {
-    public class DiversitySelectionStrategy : ISelectionStrategy
+    internal class DiversitySelectionStrategy : ISelectionStrategy
     {
         private Func<object[], object[], double> diversityFunction;
 

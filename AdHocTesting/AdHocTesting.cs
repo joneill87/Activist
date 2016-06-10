@@ -1,11 +1,11 @@
 ﻿using DIT.Activist.ActiveLearning.Factories;
-using DIT.Activist.ActiveLearning.StoppingCriteria;
 using DIT.Activist.Domain.Interfaces;
+using DIT.Activist.Domain.Interfaces.Data;
 using DIT.Activist.Domain.Interfaces.Factories;
 using DIT.Activist.Domain.Models;
-using DIT.Activist.Domain.Repositories;
+using DIT.Activist.Domain.Interfaces.Repositories;
 using DIT.Activist.Infrastructure;
-using DIT.Activist.Infrastructure.Datastores.InMemory;
+using DIT.Activist.Infrastructure.Factories;
 using DIT.Activist.Repositories.MemCache;
 using DIT.Activist.Tasks;
 using DIT.Activist.Tasks.DataParsing;
@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DIT.Activist.Repositories;
+using DIT.Activist.Domain.Interfaces.ActiveLoop;
 
 namespace AdHocTesting
 {
@@ -21,10 +23,13 @@ namespace AdHocTesting
     {
         public static async Task<LabellingJob> RunCreateJobTest()
         {
-            ILabellingJobRepository jobRepo = new MCLabellingJobRepository();
-            IJobIterationRepository iterationRepo = new MCJobIterationRepository();
-            IDataStore dataStore = new MemCacheDataStore(CIFAR10Parser.Format);
+            ILabellingJobRepository jobRepo = new LabellingJobRepositoryFactory().Create();
+            IJobIterationRepository iterationRepo = new JobIterationRepositoryFactory().Create();
 
+            IDataParser parser = new DataParserFactory().Create(DataFormats.CIFAR10);
+            IDataFormat dataFormat = parser.Format;
+            IDataStore dataStore = new DataStoreFactory().CreateOrReplace("TestJack", dataFormat);
+            
             IPredictiveModelFactory modelFactory = new PredictiveModelFactory();
             IPredictiveModel model = modelFactory.Create("LinearRegression");
 
@@ -43,8 +48,7 @@ namespace AdHocTesting
             seedingParameters.Add("randomSeed", "15");
             ISeedingStrategy seedingStrategy = seedingFactory.Create("RandomSeedingStrategy", seedingParameters);
 
-            IJobIterationNotifier notifier = JobIterationNotifier.Instance;
-            IDataFormat dataFormat = CIFAR10Parser.Format;
+            IJobIterationNotifier notifier = new JobIterationNotifierFactory().Create();
 
             int batchSize = 3;
             int seedSize = 3;
@@ -67,9 +71,9 @@ namespace AdHocTesting
 
         public static async Task RunIterationTest(Guid iterationId, string[] labels)
         {
-            ILabellingJobRepository jobRepo = new MCLabellingJobRepository();
-            IJobIterationNotifier notifier = JobIterationNotifier.Instance;
-            IJobIterationRepository iterationRepo = new MCJobIterationRepository();
+            ILabellingJobRepository jobRepo = new LabellingJobRepositoryFactory().Create();
+            IJobIterationNotifier notifier = new JobIterationNotifierFactory().Create();
+            IJobIterationRepository iterationRepo = new JobIterationRepositoryFactory().Create();
 
             JobIteration ji = iterationRepo.Get(iterationId);
             Guid jobId = ji.JobID;

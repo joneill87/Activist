@@ -1,7 +1,6 @@
-﻿using DIT.Activist.Domain.Interfaces;
-using DIT.Activist.Infrastructure;
+﻿using DIT.Activist.Domain.Interfaces.Data;
 using DIT.Activist.Infrastructure.Factories;
-using DIT.Activist.Tasks.DataParsing;
+using DIT.Activist.Tasks.DataParsing.Formats;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +15,13 @@ namespace DIT.Activist.Controllers
     public class TrainingController : Controller
     {
         IDataStoreFactory dsFactory;
-        IDataStore dataStore { get { return dsFactory.Create(CIFAR10Parser.Format); } }
+        IDataStore dataStore
+        {
+            get
+            {
+                return dsFactory.Create("TestJack", DataFormats.CIFAR10.GetFormat());
+            }
+        }
 
         public TrainingController() : this(new DataStoreFactory()) { }
 
