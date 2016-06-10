@@ -22,6 +22,7 @@ namespace DIT.Activist.Infrastructure.Datastores.SQLServer
             return new SqlConnection(String.Format("Server={0}; Database={1}; User id={2};password={3}", server, db, user, password));
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         private object ExecuteScalar(string sql)
         {
             using (SqlConnection conn = GetSqlConnection())
@@ -29,11 +30,11 @@ namespace DIT.Activist.Infrastructure.Datastores.SQLServer
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 conn.Open();
                 object scalar = cmd.ExecuteScalar();
-                conn.Close();
                 return scalar;
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         private int ExecuteNonQuery(string sql)
         {
             using (SqlConnection conn = GetSqlConnection())
@@ -41,7 +42,6 @@ namespace DIT.Activist.Infrastructure.Datastores.SQLServer
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 conn.Open();
                 int rowsAffected = cmd.ExecuteNonQuery();
-                conn.Close();
                 return rowsAffected;
             }
         }
@@ -123,7 +123,7 @@ namespace DIT.Activist.Infrastructure.Datastores.SQLServer
             string featureVals = String.Join(",", dataFormat.GetFeatures<object>(labelled));
             string artifactVal = dataFormat.GetArtifact(labelled);
             string labelVal = dataFormat.GetLabel<object>(labelled).ToString();
-            string sql = String.Format("INSERT INTO {0} (ID, Features, Artifact, Label) VALUES ({1}, '{2}', '{3}', '{4}');", tableName, id, featureVals, artifactVal, labelVal);
+            string sql = String.Format("INSERT INTO {0} (ID, Features, Artifact, Label) VALUES ('{1}', '{2}', '{3}', '{4}');", tableName, id, featureVals, artifactVal, labelVal);
             ExecuteNonQuery(sql);
             return Task.FromResult<object>(null);
         }
@@ -132,7 +132,7 @@ namespace DIT.Activist.Infrastructure.Datastores.SQLServer
         {
             foreach (var kvp in idLabelLookups)
             {
-                string sql = String.Format("UPDATE {0} SET Label={1} WHERE ID={2};", tableName, kvp.Value, System.Convert.ToInt64(kvp.Key));
+                string sql = String.Format("UPDATE {0} SET Label='{1}' WHERE ID='{2}';", tableName, kvp.Value, System.Convert.ToInt64(kvp.Key));
                 ExecuteNonQuery(sql);
             }
             return Task.FromResult<object>(null);
@@ -143,7 +143,7 @@ namespace DIT.Activist.Infrastructure.Datastores.SQLServer
             long id = dataFormat.GetID(unlabelled);
             string featureVals = String.Join(",", dataFormat.GetFeatures<object>(unlabelled));
             string artifactVal = dataFormat.GetArtifact(unlabelled);
-            string sql = String.Format("INSERT INTO {0} (ID, Features, Artifact) VALUES ({1}, {2}, {3});", tableName, id, featureVals, artifactVal);
+            string sql = String.Format("INSERT INTO {0} (ID, Features, Artifact) VALUES ('{1}', '{2}', '{3}');", tableName, id, featureVals, artifactVal);
             return Task.FromResult<object>(null);
         }
 
@@ -153,9 +153,10 @@ namespace DIT.Activist.Infrastructure.Datastores.SQLServer
             CreateTable(tableName);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         protected override Task<object[]> GetItemById(long id)
         {
-            string sql = String.Format("SELECT ID, Features, Artifact, Label FROM {0} WHERE ID={1}", tableName, id);
+            string sql = String.Format("SELECT ID, Features, Artifact, Label FROM {0} WHERE ID='{1}'", tableName, id);
             using (SqlConnection conn = GetSqlConnection())
             {
                 SqlCommand cmd = new SqlCommand(sql, conn);
@@ -168,6 +169,7 @@ namespace DIT.Activist.Infrastructure.Datastores.SQLServer
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         protected override Task<IEnumerable<object[]>> GetRawLabelledData()
         {
             string sql = String.Format("SELECT ID, Features, Artifact, Label FROM {0} WHERE LABEL IS NOT NULL", tableName);
@@ -181,6 +183,7 @@ namespace DIT.Activist.Infrastructure.Datastores.SQLServer
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         protected override Task<IEnumerable<object[]>> GetRawUnlabelledData()
         {
             string sql = String.Format("SELECT ID, Features, Artifact, Label FROM {0} WHERE LABEL IS NULL", tableName);
