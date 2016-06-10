@@ -203,9 +203,17 @@ namespace DIT.Activist.Tasks.DataParsing
 
             public IEnumerable<T> GetFeatures<T>(object[] row)
             {
-                if (IsValidFeatureType(typeof(T)))
+                Type requestedType = typeof(T);
+                if (IsValidFeatureType(requestedType))
                 {
-                    return new ArraySegment<object>(row, featureStartIndex, featureCount).Select(v => (T)System.Convert.ChangeType(v, typeof(T)));
+                    if (requestedType == typeof(object))
+                    {
+                        return (IEnumerable<T>)(new ArraySegment<object>(row, featureStartIndex, featureCount).AsEnumerable());
+                    }
+                    else
+                    {
+                        return new ArraySegment<object>(row, featureStartIndex, featureCount).Select(v => (T)System.Convert.ChangeType(v, typeof(T)));
+                    }
                 }
                 else
                 {

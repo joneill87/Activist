@@ -16,10 +16,20 @@ namespace DIT.Activist.ActiveLearning.Models
         private int k;
         private int numberOfClasses;
 
-        public KNearestNeighbour(int k, int numberOfClasses)
+        public KNearestNeighbour()
         {
-            this.k = k;
-            this.numberOfClasses = numberOfClasses;
+            
+        }
+
+        public void Initialize(Dictionary<string, string> parameters)
+        {
+            this.k = Convert.ToInt32(parameters["k"]);
+            this.numberOfClasses = Convert.ToInt32(parameters["numberOfClasses"]);
+        }
+
+        public IEnumerable<string> ParameterNames
+        {
+            get { return new string[] { "k", "numberOfClasses" }; }
         }
 
         public double[] Compute(double[][] inputs)

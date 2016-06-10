@@ -10,6 +10,7 @@ using DIT.Activist.Webservice.Helpers;
 using DIT.Activist.Infrastructure;
 using DIT.Activist.Tasks.DataParsing;
 using DIT.Activist.Domain.Interfaces;
+using DIT.Activist.Infrastructure.Factories;
 
 namespace DIT.Activist.Controllers
 {

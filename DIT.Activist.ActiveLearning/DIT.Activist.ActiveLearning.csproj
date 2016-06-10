@@ -59,6 +59,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Factories\BaseFactory.cs" />
+    <Compile Include="Factories\PredictiveModelFactory.cs" />
+    <Compile Include="Factories\SeedingStrategyFactory.cs" />
+    <Compile Include="Factories\SelectionStrategyFactory.cs" />
+    <Compile Include="Factories\StoppingCriterionFactory.cs" />
     <Compile Include="Models\KNearestNeighbour.cs" />
     <Compile Include="Models\LinearRegression.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -11,10 +11,18 @@ namespace DIT.Activist.ActiveLearning.SelectionStrategies
     {
         private Random randomGenerator;
 
-        public RandomSelectionStrategy(int seed)
+        public RandomSelectionStrategy()
         {
-            randomGenerator = new Random(seed);
+            
         }
+
+        public void Initialize(Dictionary<string, string> parameters)
+        {
+            int randomSeed = Convert.ToInt32(parameters["randomSeed"]);
+            randomGenerator = new Random(randomSeed);
+        }
+
+        public IEnumerable<string> ParameterNames { get { return new string[] { "randomSeed" }; } }
 
         public Task<ICollection<long>> GenerateQuery(IEnumerable<object[]> labelled, IEnumerable<object[]> unlabelled, IDataFormat dataFormat, int batchSize)
         {

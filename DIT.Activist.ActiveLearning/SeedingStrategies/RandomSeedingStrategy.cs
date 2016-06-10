@@ -9,13 +9,20 @@ namespace DIT.Activist.ActiveLearning.SeedingStrategies
 {
     public class RandomSeedingStrategy : ISeedingStrategy
     {
-        private readonly Random randomGenerator;
+        private Random randomGenerator;
 
-        public RandomSeedingStrategy(int randomSeed)
+        public RandomSeedingStrategy()
         {
-            randomGenerator = new Random(randomSeed);
+            
         }
 
+        public IEnumerable<string> ParameterNames { get { return new string[] { "randomSeed" }; } }
+
+        public void Initialize(Dictionary<string, string> parameters)
+        {
+            int randomSeed = Convert.ToInt32(parameters["randomSeed"]);
+            randomGenerator = new Random(randomSeed);
+        }
         public async Task<IEnumerable<long>> GetQueryIDs(IDataStore dataStore, IDataFormat format, int seedSize)
         {
             var unlabelled = (await dataStore.GetUnlabelled()).ToList();

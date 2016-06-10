@@ -45,7 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CombinationStream.cs" />
-    <Compile Include="DataStoreFactory.cs" />
+    <Compile Include="Factories\DataStoreFactory.cs" />
     <Compile Include="Datastores\BaseDataStore.cs" />
     <Compile Include="Datastores\Redis\RedisDataStore.cs" />
     <Compile Include="Datastores\SQLServer\SQLServerDataStore.cs" />

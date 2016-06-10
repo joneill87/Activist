@@ -40,19 +40,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\ActiveLearning\DiversityFunctions.cs" />
+    <Compile Include="Interfaces\Factories\IActivatable.cs" />
+    <Compile Include="Interfaces\Factories\IPredictiveModelFactory.cs" />
+    <Compile Include="Interfaces\Factories\ISeedingStrategyFactory.cs" />
+    <Compile Include="Interfaces\Factories\ISelectionStrategyFactory.cs" />
+    <Compile Include="Interfaces\Factories\IStoppingCriterionFactory.cs" />
     <Compile Include="Interfaces\IDataFormat.cs" />
     <Compile Include="Interfaces\IDataStore.cs" />
     <Compile Include="Interfaces\IDataStoreFactory.cs" />
     <Compile Include="Interfaces\IJobIterationNotifier.cs" />
     <Compile Include="Interfaces\ILoopNotificationHub.cs" />
-    <Compile Include="Interfaces\ISeedingStrategy.cs" />
+    <Compile Include="Interfaces\Components\ISeedingStrategy.cs" />
     <Compile Include="Models\Datasets\Dataset.cs" />
     <Compile Include="Models\Datasets\DatasetMetadata.cs" />
     <Compile Include="Repositories\IJobIterationRepository.cs" />
     <Compile Include="Repositories\ILabellingJobRepository.cs" />
-    <Compile Include="Interfaces\IPredictiveModel.cs" />
-    <Compile Include="Interfaces\ISelectionStrategy.cs" />
-    <Compile Include="Interfaces\IStoppingCriterion.cs" />
+    <Compile Include="Interfaces\Components\IPredictiveModel.cs" />
+    <Compile Include="Interfaces\Components\ISelectionStrategy.cs" />
+    <Compile Include="Interfaces\Components\IStoppingCriterion.cs" />
     <Compile Include="Models\JobIteration.cs" />
     <Compile Include="Models\LabellingJob.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

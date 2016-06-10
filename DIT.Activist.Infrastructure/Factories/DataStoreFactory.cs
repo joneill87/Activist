@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DIT.Activist.Infrastructure
+namespace DIT.Activist.Infrastructure.Factories
 {
     public class DataStoreFactory : IDataStoreFactory
     {

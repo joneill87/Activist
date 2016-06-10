@@ -9,12 +9,20 @@ namespace DIT.Activist.ActiveLearning.StoppingCriteria
 {
     public class LabelLimit : IStoppingCriterion
     {
-        private readonly int maxLabels;
+        private int maxLabels;
 
-        public LabelLimit(int maxLabels)
+        public LabelLimit()
         {
-            this.maxLabels = maxLabels;
+            
         }
+
+        public IEnumerable<string> ParameterNames { get { return new string[] { "maxLabels" }; } }
+
+        public void Initialize(Dictionary<string, string> parameters)
+        {
+            maxLabels = Convert.ToInt32(parameters["maxLabels"]);
+        }
+
         public Task<bool> ShouldStop(IEnumerable<object[]> unlabelled, IEnumerable<object[]> labelled)
         {
             return Task.FromResult(labelled.Count() >= maxLabels);

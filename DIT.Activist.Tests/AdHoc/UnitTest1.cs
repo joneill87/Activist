@@ -9,6 +9,12 @@ using System.Collections.Generic;
 using DIT.Activist.ActiveLearning.Models;
 using System.Threading.Tasks;
 using DIT.Activist.Infrastructure.Datastores.InMemory;
+using DIT.Activist.ActiveLearning.SelectionStrategies;
+using Accord.Math;
+using DIT.Activist.Infrastructure.Factories;
+using DIT.Activist.Domain.Interfaces.Factories;
+using DIT.Activist.Domain.Interfaces.ActiveLearning;
+using DIT.Activist.ActiveLearning.Factories;
 
 namespace DIT.Activist.Tests.AdHoc
 {
@@ -41,8 +47,7 @@ namespace DIT.Activist.Tests.AdHoc
             //}
             
         }
-
-        [TestMethod]
+        //[TestMethod]
         public void KNN_Does_Its_Stuff()
         {
             const int TRAIN_LIMIT = 50;
@@ -59,7 +64,12 @@ namespace DIT.Activist.Tests.AdHoc
             var addTask = dataStore.AddLabelledRow(dataInput);
             Task.WaitAll(addTask);
 
-            IPredictiveModel model = new KNearestNeighbour(5, 10);
+            IPredictiveModelFactory modelFactory = new PredictiveModelFactory();
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+
+            parameters.Add("k", "5");
+            parameters.Add("numberOfClasses", "10");
+            IPredictiveModel model = modelFactory.Create("KNearestNeighbour", parameters);
 
             object[][] data = dataStore.GetLabelled().Result.Take(TRAIN_LIMIT).ToArray();
             var features = data.GetFeatures<double>(dataFormat);
@@ -90,6 +100,83 @@ namespace DIT.Activist.Tests.AdHoc
             }
 
             Assert.IsTrue(correct > 0);
+        }
+
+        private class TestDataFormat : IDataFormat
+        {
+            public int ArrayLength { get { return 4; } }
+
+            public Type FeatureType { get { return typeof(double); } }
+
+            public Type LabelType { get { return typeof(double); } }
+
+            public object[] CreateEmptyRow()
+            {
+                return new object[4];
+            }
+
+            public string GetArtifact(object[] row)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IEnumerable<T> GetFeatures<T>(object[] row)
+            {
+                return row.Skip(1).Select(r => (T)Convert.ChangeType(r, typeof(T))).ToArray();
+            }
+
+            public long GetID(object[] row)
+            {
+                return Convert.ToInt64(row[0]);
+            }
+
+            public T GetLabel<T>(object[] row)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void SetArtifact(object[] row, string value)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void SetFeatures<T>(object[] row, IEnumerable<T> values)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void SetID(object[] row, long id)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void SetLabel<T>(object[] row, T value)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [TestMethod]
+        public void Diversity_SS_Is_Awesome()
+        {
+            ISelectionStrategyFactory ssFactory = new SelectionStrategyFactory();
+            Dictionary<string, string> ssParameters = new Dictionary<string, string>();
+            ssParameters.Add("diversityFunction", DiversityFunctions.COSINE_DISTANCE.ToString());
+            ISelectionStrategy diversity = ssFactory.Create("DiversitySelectionStrategy", ssParameters);
+
+            object[][] labelled = new object[][]
+            {
+                new object[] {1, 5, 5, 5}
+            };
+            object[][] unlabelled = new object[][]
+            {
+                new object[] {2, 6, 5, 6},
+                new object[] {3, 8, 18, 218}
+            };
+
+            var selected = diversity.GenerateQuery(labelled, unlabelled, new TestDataFormat(), 1).Result;
+            Assert.AreEqual(selected.Count, 1);
+            Assert.AreEqual(selected.First(), 3);
         }
     }
 }

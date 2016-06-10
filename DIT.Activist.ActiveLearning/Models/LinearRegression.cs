@@ -19,6 +19,13 @@ namespace DIT.Activist.ActiveLearning.Models
             
         }
 
+        public IEnumerable<string> ParameterNames { get { return Enumerable.Empty<string>(); } }
+
+        public void Initialize(Dictionary<string, string> parameters)
+        {
+            //no parameters
+        }
+
         public void Train(IEnumerable<double[]> inputs, IEnumerable<double> labels)
         {
             if (inputs.Count() < 1)

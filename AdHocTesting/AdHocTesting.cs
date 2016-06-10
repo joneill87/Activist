@@ -1,8 +1,7 @@
-﻿using DIT.Activist.ActiveLearning.Models;
-using DIT.Activist.ActiveLearning.SeedingStrategies;
-using DIT.Activist.ActiveLearning.SelectionStrategies;
+﻿using DIT.Activist.ActiveLearning.Factories;
 using DIT.Activist.ActiveLearning.StoppingCriteria;
 using DIT.Activist.Domain.Interfaces;
+using DIT.Activist.Domain.Interfaces.Factories;
 using DIT.Activist.Domain.Models;
 using DIT.Activist.Domain.Repositories;
 using DIT.Activist.Infrastructure;
@@ -25,10 +24,25 @@ namespace AdHocTesting
             ILabellingJobRepository jobRepo = new MCLabellingJobRepository();
             IJobIterationRepository iterationRepo = new MCJobIterationRepository();
             IDataStore dataStore = new MemCacheDataStore(CIFAR10Parser.Format);
-            IPredictiveModel model = new LinearRegression();
-            ISelectionStrategy selectionStrategy = new RandomSelectionStrategy(15);
-            IStoppingCriterion stoppingCriterion = new LabelLimit(15);
-            ISeedingStrategy seedingStrategy = new RandomSeedingStrategy(15);
+
+            IPredictiveModelFactory modelFactory = new PredictiveModelFactory();
+            IPredictiveModel model = modelFactory.Create("LinearRegression");
+
+            ISelectionStrategyFactory ssFactory = new SelectionStrategyFactory();
+            Dictionary<string, string> ssParameters = new Dictionary<string, string>();
+            ssParameters.Add("randomSeed", "15");
+            ISelectionStrategy selectionStrategy = ssFactory.Create("RandomSelectionStrategy", ssParameters);
+
+            IStoppingCriterionFactory scFactory = new StoppingCriterionFactory();
+            Dictionary<string, string> scParameters = new Dictionary<string, string>();
+            scParameters.Add("maxLabels", "15");
+            IStoppingCriterion stoppingCriterion = scFactory.Create("LabelLimit", scParameters);
+
+            ISeedingStrategyFactory seedingFactory = new SeedingStrategyFactory();
+            Dictionary<string, string> seedingParameters = new Dictionary<string, string>();
+            seedingParameters.Add("randomSeed", "15");
+            ISeedingStrategy seedingStrategy = seedingFactory.Create("RandomSeedingStrategy", seedingParameters);
+
             IJobIterationNotifier notifier = JobIterationNotifier.Instance;
             IDataFormat dataFormat = CIFAR10Parser.Format;
 

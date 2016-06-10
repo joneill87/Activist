@@ -1,5 +1,6 @@
 ﻿using DIT.Activist.Domain.Interfaces;
 using DIT.Activist.Infrastructure;
+using DIT.Activist.Infrastructure.Factories;
 using DIT.Activist.Tasks.DataParsing;
 using System;
 using System.Collections.Generic;
