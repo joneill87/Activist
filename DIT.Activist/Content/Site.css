@@ -14,4 +14,9 @@ input,
 select,
 textarea {
     max-width: 280px;
+    display:block;
+}
+
+form {
+    margin-bottom:20px;
 }

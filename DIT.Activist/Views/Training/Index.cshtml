@@ -135,6 +135,34 @@
 
 <h2>Index</h2>
 
+<form id="job-setup">
+    <label>Dataset Name</label>
+    <input type="text" id="datasetName" name="datasetName" />
+
+    <label>Model Type</label>
+    <select id="modelType" name="modelType">
+        <option value="LinearRegression">Linear Regression</option>
+    </select>
+
+    <label>Selection Strategy</label>
+    <select id="selectionStrategy" name="selectionStrategy">
+        <option value="RandomSelectionStrategy">Random</option>
+    </select>
+
+    <label>Stopping Criterion (Max Labels)</label>
+    <input type="number" id="maxLabels" name="maxLabels" />
+
+    <label>Seeding Strategy</label>
+    <select id="seedingStrategy" name="seedingStrategy">
+        <option value="RandomSeedingStrategy">Random</option>
+    </select>
+
+    <label>Batch Size</label>
+    <input id="batchSize" name="batchSize" type="number" />
+
+    <label>Seed Size</label>
+    <input id="seedSize" name="seedSize" type="number" />
+</form>
 <form id="dropzone-file-upload-form" method="post" enctype="multipart/form-data" action="/api/Dataset" class="dropzone">
 
 </form>
@@ -146,9 +174,16 @@
 
 <select id="oracleDropdown">
     <option value="">Please Select...</option>
-    <option>1</option>
-    <option>2</option>
-    <option>3</option>
+    <option value="1">Airplane</option>
+    <option value="2">Automobile</option>
+    <option value="3">Bird</option>
+    <option value="4">Cat</option>
+    <option value="5">Deer</option>
+    <option value="6">Dog</option>
+    <option value="7">Frog</option>
+    <option value="8">Horse</option>
+    <option value="9">Ship</option>
+    <option value="10">Truck</option>
 </select>
 
 <button id="oracleSubmit" disabled="disabled">Submit Batch</button>
