@@ -12,26 +12,27 @@ using DIT.Activist.Tasks.DataParsing.Formats;
 using DIT.Activist.Infrastructure.Factories;
 using DIT.Activist.Domain.Interfaces.Data;
 using DIT.Activist.Tasks.DataParsing.Parsers;
+using DIT.Activist.Tasks.DataParsing;
 
 namespace DIT.Activist.Controllers
 {
     public class DatasetController : ApiController
     {
         IDataStoreFactory dsFactory;
-        IDataStore dataStore
+        IDataParserFactory parserFactory;
+
+        IDataStore GetDataStore(string datastoreName, IDataFormat format)
         {
-            get
-            { 
-                return dsFactory.Create("TestJack", DataFormats.CIFAR10.GetFormat());
-            }
+            return dsFactory.CreateOrConnect(datastoreName, format);
         }
 
-        public DatasetController(IDataStoreFactory dsFactory)
+        public DatasetController(IDataStoreFactory dsFactory, IDataParserFactory parserFactory)
         {
             this.dsFactory = dsFactory;
+            this.parserFactory = parserFactory;
         }
 
-        public DatasetController() : this(new DataStoreFactory()) { }
+        public DatasetController() : this(new DataStoreFactory(), new DataParserFactory()) { }
 
         // GET: api/Dataset
         public IEnumerable<string> Get()
@@ -71,9 +72,7 @@ namespace DIT.Activist.Controllers
 
                 var fileContent = file.File;
 
-                //need to fix this line to make sure it returns the right file type
-                FileHelpers.Filetypes fileType = FileHelpers.GetFileType(extension);
-                var parser = new CIFAR10Parser();
+                var parser = parserFactory.Create(dataFormat);
                
 
                 var metadata = new DatasetMetadata()
@@ -81,6 +80,7 @@ namespace DIT.Activist.Controllers
                     Name = "Test Data Set 1"
                 };
 
+                var dataStore = GetDataStore(datasetName, dataFormat.GetFormat());
                 dataStore.Clear();
 
                 await dataStore.AddUnlabelledRow(parser.ExtractFeatureValues(fileContent, 500));

@@ -118,7 +118,7 @@ namespace DIT.Activist.Tasks.DataParsing.Parsers
                     }
                 }
 
-                b.Save(@"C:\Users\Jack\Desktop\cifar\test_" + imageCount++ + "_" + label + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                //b.Save(@"C:\Users\Jack\Desktop\cifar\test_" + imageCount++ + "_" + label + ".png", System.Drawing.Imaging.ImageFormat.Png);
 
                 using (MemoryStream pngBuffer = new MemoryStream())
                 {

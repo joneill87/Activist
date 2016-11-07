@@ -43,9 +43,11 @@
   <ItemGroup>
     <Compile Include="ActiveLoop.cs" />
     <Compile Include="DataParsing\Formats\CIFAR10Format.cs" />
+    <Compile Include="DataParsing\Formats\MNistFormat.cs" />
     <Compile Include="DataParsing\Parsers\CIFAR10Parser.cs" />
     <Compile Include="DataParsing\Formats\DataFormatExtensions.cs" />
     <Compile Include="DataParsing\DataParserFactory.cs" />
+    <Compile Include="DataParsing\Parsers\MNistParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

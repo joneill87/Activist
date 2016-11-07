@@ -10,6 +10,10 @@ namespace DIT.Activist.Domain.Interfaces.Data
     {
         IDataStore Create(string name, IDataFormat format);
 
+        IDataStore CreateOrReplace(string name, IDataFormat format);
+
+        IDataStore CreateOrConnect(string name, IDataFormat format);
+
         IDataStore Retrieve(string name);
     }
 }

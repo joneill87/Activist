@@ -32,8 +32,10 @@ namespace DIT.Activist.Webservice.Helpers
                 case "csv":
                     return Filetypes.CSV;
                 case "idx1":
+                case "idx1-ubyte":
                     return Filetypes.IDX1;
                 case "idx3":
+                case "idx3-ubyte":
                     return Filetypes.IDX3;
                 case "bin":
                     return Filetypes.CSV;

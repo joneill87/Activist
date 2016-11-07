@@ -36,6 +36,7 @@ namespace DIT.Activist.Infrastructure.Datastores.InMemory
                 throw new NonExistantDatastoreException(name);
             }
             connectedDataset = Datasets[name].Item1;
+            dataFormat = Datasets[name].Item2;
         }
 
         protected override void CreateDatastore(string name)
@@ -49,8 +50,12 @@ namespace DIT.Activist.Infrastructure.Datastores.InMemory
 
         protected override void CreateOrReplaceDatastore(string name)
         {
-            Datasets.Add(name, new Tuple<Cache, IDataFormat>(new Cache(), dataFormat));
+            if (!Datasets.ContainsKey(name))
+            {
+                Datasets.Add(name, new Tuple<Cache, IDataFormat>(new Cache(), dataFormat));
+            }
             Connect(name);
+            Clear();
         }
 
         public override bool Exists(string name)

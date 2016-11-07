@@ -101,5 +101,18 @@ namespace DIT.Activist.Infrastructure.Datastores
             this.dataFormat = dataFormat;
             CreateOrReplaceDatastore(name);
         }
+
+        public void CreateOrConnect(string name, IDataFormat dataFormat)
+        {
+            this.dataFormat = dataFormat;
+            if (!Exists(name))
+            {
+                CreateDatastore(name);
+            }
+            else
+            {
+                Connect(name);
+            }
+        }
     }
 }

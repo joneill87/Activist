@@ -12,11 +12,44 @@
 
         $(function () {
 
-            var dropzone = new Dropzone("#dropzone-file-upload-form");
+            function getFileExtension(fileName) {
+                ///<param name="fileName" type="String">The Filename</param>
+                
+                var indexOfLastDot = fileName.lastIndexOf(".");
+                return fileName.substr(indexOfLastDot + 1);
+            }
+
+            function getFileExtensionEnum(extension) {
+                ///<param name="extension" type="String">The Extension</param>
+                var extLower = extension.toLowerCase();
+                switch (extLower) {
+                    case "cifar":
+                    case "bin":
+                        return 1;
+                    case "idx3-ubyte":
+                        return 2;
+                    default:
+                        alert('unrecognized extension');
+                        console.log(extension);
+                        return undefined;
+                }
+            }
+
+            var dropzone = new Dropzone("#dropzone-file-upload-form", {
+                init: function () {
+                    var self = this;
+                    this.on('processing', function (file) {
+                        var fileExtensionEnum = getFileExtensionEnum(getFileExtension(file.name));
+                        self.options.url = self.options.url + '?datasetName=TestJack&dataFormat=' + fileExtensionEnum;
+                        console.log(file);
+                        console.log('new target is ' + self.options.url);
+                    });
+                }
+            });
 
             dropzone.on('success', function (file, response) {
                 init();
-            })
+            });
 
             var currentIteration = 0;
 
@@ -27,7 +60,7 @@
             var currentIndex = undefined;
 
             function getArtifacts(ids) {
-                return $.get("/api/Artifacts/?" + $.map(ids, function (i) { return 'ids=' + i }).join('&'));
+                return $.get("/api/Artifacts/?id=TestJack&" + $.map(ids, function (i) { return 'ids=' + i }).join('&'));
             }
 
             function setCurrentImage(index) {

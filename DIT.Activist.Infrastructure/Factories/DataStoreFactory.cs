@@ -32,6 +32,13 @@ namespace DIT.Activist.Infrastructure.Factories
             return ds;
         }
 
+        public IDataStore CreateOrConnect(string name, IDataFormat format)
+        {
+            var ds = GetInstance();
+            ds.CreateOrConnect(name, format);
+            return ds;
+        }
+
         public IDataStore Retrieve(string name)
         {
             var ds = GetInstance();

@@ -28,7 +28,7 @@ namespace AdHocTesting
 
             IDataParser parser = new DataParserFactory().Create(DataFormats.CIFAR10);
             IDataFormat dataFormat = parser.Format;
-            IDataStore dataStore = new DataStoreFactory().CreateOrReplace("TestJack", dataFormat);
+            IDataStore dataStore = new DataStoreFactory().CreateOrConnect("TestJack", dataFormat);
             
             IPredictiveModelFactory modelFactory = new PredictiveModelFactory();
             IPredictiveModel model = modelFactory.Create("LinearRegression");
